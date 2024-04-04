@@ -1,6 +1,6 @@
 # Projeto Integrador │ Fase 1
 
-# Requisitos para funcionamento: Abrir o terminal e digitar o sguinte comando: "pip install pandas" (Instalação da biblioteca referente a tabela) 
+# Requisitos para funcionamento: Abrir o terminal e digitar o seguinte comando: "pip install pandas" (Instalação da biblioteca referente a tabela) 
 
 import sys
 import time
@@ -33,13 +33,13 @@ opcao = int (input("\n Selecione uma opção: "))
 if opcao == 1 : 
     loading_bar()
     print (f"Vamos ao cadastro do seu produto, preencha as informações abaixo: ")
-    codigo = int (input("Digite o código do produto: "))
+    codigo = str (input("Digite o código do produto: "))
     nome = str (input("Digite o nome do produto: "))
     descricao = str (input("Digite a descrição do produto: "))
 
     # Perguntas para montar a fórmula de cálculo do preço de venda
     loading_bar()
-    print (f"Agora, precisamos algumas informações para calcular o preço do produto:  ")
+    print (f"Agora, precisamos algumas informações para o levantamente de alguns dados:  ")
     
     CP = int (input("Qual custo de aquisição do produto?: "))
     CF = int (input("Qual o custo fixo/administrativo? (em porcentagem):  "))
@@ -93,7 +93,7 @@ if opcao == 1 :
     
     print(tabela)
 
-    # 20/100 = 0,2
+    # Passando a margem de lucro (ML) para porcentagem
     lucro = ML/100
 
     if lucro > (0.2):
