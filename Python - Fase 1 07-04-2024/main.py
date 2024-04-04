@@ -1,12 +1,14 @@
-# Projeto Integrador
+# Projeto Integrador │ Fase 1
+
+# Requisitos para funcionamento: Abrir o terminal e digitar o sguinte comando: "pip install pandas" (Instalação da biblioteca referente a tabela) 
 
 import sys
 import time
 import pandas as pd
 
-# Começo Loading Bar
+# Começo da função da barra de carregamento
 def loading_bar():
-    toolbar_width = 15
+    toolbar_width = 15 #Tamanho da barra
     sys.stdout.write("[%s]" % (" " * toolbar_width))
     sys.stdout.flush()
     sys.stdout.write("\b" * (toolbar_width+1))
@@ -17,7 +19,7 @@ def loading_bar():
         sys.stdout.flush()
 
     sys.stdout.write("\n")
-# Fim Loading Bar
+# Fim da função da barra de carregamento
     
 # Menu de navegação
 loading_bar()
@@ -27,18 +29,11 @@ menu = ["1. Cadastrar produtos","2. Classificar produtos","3. Excluir produto","
 print (menu)
 opcao = int (input("\n Selecione uma opção: "))
 
-# SE o usuário digitar 1, irá mostrar na tela os seguintes inputs.
+# SE o usuário digitar 1, para cadastrar os produtos, irá mostrar na tela os seguintes inputs.
 if opcao == 1 : 
     loading_bar()
     print (f"Vamos ao cadastro do seu produto, preencha as informações abaixo: ")
-    # Repetição para caso o usuário erre, ter uma nova chance de acertar!
-    while True:
-        try:
-            codigo = int (input("Digite o código do produto: "))
-            break
-        except ValueError :
-            print ("Digite somente números.")
-        
+    codigo = int (input("Digite o código do produto: "))
     nome = str (input("Digite o nome do produto: "))
     descricao = str (input("Digite a descrição do produto: "))
 
@@ -102,15 +97,15 @@ if opcao == 1 :
     lucro = ML/100
 
     if lucro > (0.2):
-        print("Lucro alto")
+        print("Lucro alto!")
     elif (0.1) < lucro <= (0.2):
-        print("Lucro médio")
+        print("Lucro médio!")
     elif (0) > lucro <= (0.1):
-        print("Lucro baixo")
+        print("Lucro baixo!")
     elif lucro == 0:
-        print("Equilíbrio")
+        print("Equilíbrio!")
     else:
-        print("Lucro negativo")
+        print("Prejuízo!")
     
 
 # Função 2 (Ainda não funcional).
@@ -118,7 +113,7 @@ if opcao == 2 :
     sys.exit()
 
 # Função 3 (Ainda não funcional).
-if opcao == 3 :
+elif opcao == 3 :
     sys.exit()
     
 # Função sair, importado da biblioteca sys.
