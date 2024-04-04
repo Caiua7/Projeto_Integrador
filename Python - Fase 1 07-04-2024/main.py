@@ -55,13 +55,14 @@ if opcao == 1 :
     #Fórmula para calcular o preço de venda
     PV = CP / ( 1 - ( ( CF + CV + IV + ML) / 100 ) )
 
-    #Lógica 1
-    # Receita Bruta é = Preço de Venda - Custo do produto (Regra de 3)
+    
+    # Receita Bruta é = Preço de Venda - Custo do produto
     RB = (PV - CP)
 
-    # Outros custos = Custo fixo + Comissão de vendas + Imposto sobre venda (Regra de 3)
+    # Outros custos = Custo fixo + Comissão de vendas + Imposto sobre venda
     OC = (CF + CV + IV)
-    
+
+    #Lógica 1
     # Cáculo da PORCENTAGEM do preço de venda (Regra de 3)
     PPV = (PV*100) / PV
 
