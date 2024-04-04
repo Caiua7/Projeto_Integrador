@@ -1,6 +1,6 @@
 # Projeto Integrador │ Fase 1
 
-# Requisitos para funcionamento: Abrir o terminal e digitar o seguinte comando: "pip install pandas" (Instalação da biblioteca referente a tabela) 
+# Requisitos para o funcionamento do sistema: Abrir o terminal e digitar o seguinte comando: "pip install pandas" (Instalação da biblioteca referente a tabela) 
 
 import sys
 import time
