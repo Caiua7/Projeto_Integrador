@@ -100,7 +100,7 @@ if opcao == 1 :
         print("Lucro alto!")
     elif (0.1) < lucro <= (0.2):
         print("Lucro médio!")
-    elif (0) > lucro <= (0.1):
+    elif (0) < lucro <= (0.1):
         print("Lucro baixo!")
     elif lucro == 0:
         print("Equilíbrio!")
