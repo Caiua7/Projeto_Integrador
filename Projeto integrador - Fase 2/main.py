@@ -1,6 +1,6 @@
 # Projeto Integrador │ Fase 2
 
-# Requisitos para o funcionamento do sistema: Abrir o terminal e digitar os seguinte comandos: "pip install pandas" e "pip install oracledb" (Instalação da biblioteca referente a tabela e banco de dados) 
+# Requisitos para o funcionamento do sistema: Abrir o terminal e digitar os seguintes comandos: "pip install pandas" e "pip install oracledb" (Instalação da biblioteca referente a tabela e banco de dados) 
 
 import sys
 import time
