@@ -119,3 +119,6 @@ elif opcao == 3 :
 # Função sair, importado da biblioteca sys.
 else :
     sys.exit ()
+
+
+
