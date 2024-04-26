@@ -29,19 +29,21 @@ def loading_bar():
 
 # Banco de dados Oracle
 
-pw = getpass.getpass("Digite a senha: ")
-
-try:
-    conexao = oracledb.connect(
+while True :
+    try:
+        pw = getpass.getpass("Digite a senha: ")
+        conexao = oracledb.connect(
         user="sys",
         password=pw,
         dsn="localhost/XEPDB1",
         mode=oracledb.SYSDBA)
-except Exception as erro:
-    print('Erro de conexão:', erro)
-    sys.exit()
-else:
-    print("Conexão bem sucedida:", conexao.version)
+    except Exception as erro:
+        print('Erro de conexão:', erro)
+    else:
+        print("Conexão bem sucedida:", conexao.version)
+        break
+
+
 
 # --------------------------------------------------- #
 
@@ -71,10 +73,14 @@ if opcao == 1 :
     IV = int(input("Qual o imposto cobrado sobre a venda do produto? (em porcetagem): "))
     ML = int(input("Qual a margem do lucro do produto? (em porcentagem):  "))
     
-    #Fórmula para calcular o preço de venda
-    PV = CP / ( 1 - ( ( CF + CV + IV + ML ) / 100 ) )
-
+    if (ML > 100) :
+        #Fórmula para calcular o preço de venda
+        PV = CP / ( (ML/100) - ( ( CF + CV + IV + ML ) / 100 ) )
     
+    elif (ML <= 100) :
+        #Fórmula para calcular o preço de venda
+        PV = CP / ( 1 - ( ( CF + CV + IV + ML ) / 100 ) )
+
     # Receita Bruta é = Preço de Venda - Custo do produto
     RB = (PV - CP)
 
@@ -142,7 +148,7 @@ elif opcao == 2 :
     # Salvar o que o comando "cursor.excute" fez. Todos as informações de "Produtos" foram salva na variável "lista_produtos"
     lista_produtos = cursor.fetchall() 
     # Fechar cursos
-    cursor.close() 
+    cursor.close()
 
     # Loop para pegar os dados da tabela "Produtos" no DB.
     for i in lista_produtos:
