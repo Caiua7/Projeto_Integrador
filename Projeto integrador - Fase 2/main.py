@@ -71,12 +71,12 @@ if opcao == 1 :
     IV = int(input("Qual o imposto cobrado sobre a venda do produto? (em porcetagem): "))
     ML = int(input("Qual a margem do lucro do produto? (em porcentagem):  "))
     
-    if (ML > 100) :
-        #Fórmula para calcular o preço de venda
-        PV = CP / ( (ML/100) - ( ( CF + CV + IV + ML ) / 100 ) )
-    
-    elif (ML <= 100) :
-        #Fórmula para calcular o preço de venda
+    if (ML >= 100) :
+        #Fórmula para calcular o preço de venda se ML for maior ou igual a 100
+        PV = CP * ( 1 + ( ( CF + CV + IV + ML ) / 100 ) )
+
+    elif (ML < 100) :
+        #Fórmula para calcular o preço de venda se ML for menor que 100
         PV = CP / ( 1 - ( ( CF + CV + IV + ML ) / 100 ) )
 
     # Receita Bruta é = Preço de Venda - Custo do produto
@@ -153,8 +153,13 @@ elif opcao == 2 :
         # Atribuir das tuplas a variável "i" -- Será atribuido a cada uma das variaveis as tuplas correspondentes a lista "lista_produtos".
         id_produto, nome, descricao, CP, CF, CV, IV, ML = i
 
-        # Fórmula para calcular o preço de venda
-        PV = CP / ( 1 - ( ( CF + CV + IV + ML ) / 100 ) )
+        if (ML >= 100) :
+            #Fórmula para calcular o preço de venda se ML for maior ou igual a 100
+            PV = CP * ( 1 + ( ( CF + CV + IV + ML ) / 100 ) )
+    
+        elif (ML < 100) :
+            #Fórmula para calcular o preço de venda se ML for menor que 100
+            PV = CP / ( 1 - ( ( CF + CV + IV + ML ) / 100 ) )
 
         # Receita Bruta é = Preço de Venda - Custo do produto
         RB = (PV - CP)
