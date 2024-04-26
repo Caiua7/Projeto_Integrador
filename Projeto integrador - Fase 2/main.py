@@ -43,8 +43,6 @@ while True :
         print("Conexão bem sucedida:", conexao.version)
         break
 
-
-
 # --------------------------------------------------- #
 
 # Menu de navegação
