@@ -83,7 +83,7 @@ if opcao == 1 :
     # Fechar cursos
     cursor.close()
     
-    if (ML >= 100) :
+    if (ML >= 100) or (ML < 100) and (CF + CV + IV + ML >= 100) :
         #Fórmula para calcular o preço de venda se ML for maior ou igual a 100
         PV = CP * ( 1 + ( ( CF + CV + IV + ML ) / 100 ) )
 
