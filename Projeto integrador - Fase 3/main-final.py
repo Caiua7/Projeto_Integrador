@@ -7,65 +7,86 @@ import time
 import pandas as pd
 from unidecode import unidecode
 
+# Cripto
 import numpy as np
 import os
 
-#Banco de dados
+# Banco de dados
 import getpass
 import oracledb
 
+
+# Cleaner Prompt
+def clear_screen():
+    os.system('cls')
+clear_screen()
+# Cleaner Prompt end
+
 alfabeto = {' ': 0,'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7, 'H': 8, 'I': 9, 'J': 10, 'K': 11, 'L': 12, 'M': 13, 'N': 14, 'O': 15, 'P': 16, 'Q': 17, 'R': 18, 'S': 19, 'T': 20, 'U': 21, 'V': 22, 'W': 23, 'X': 24, 'Y': 25, 'Z': 26}
 
-def criptografar():
-  palavra = input("Digite a palavra: ").upper()
-  matriz_palavra_em_num = np.array([[], []])
+def criptografar(descricao):
+    palavra = f'{unidecode(descricao)}'.upper()
+    palavra_impar = False
+    if len(palavra) % 2 != 0:
+        palavra += "A"
+        palavra_impar = True
 
-  palavra_impar = False
-  if len(palavra) % 2 != 0:
-      palavra += "A"
-      palavra_impar = True
+    matriz_palavra_em_num = palavra_em_matriz(palavra)
 
-  matriz_palavra_em_num = palavra_em_matriz(palavra)
+    palavra_original = palavra[:-1] if palavra_impar else palavra
+    # print("-" * 50)
+    # print(f"Matriz da palavra {palavra_original} em números:")
+    # print(matriz_palavra_em_num)
+    # # print("-" * 50)
 
-  palavra = palavra[:-1]
-  print("-"*50)
-  print(f"Matriz da palavra  {palavra} em número:")
-  print(matriz_palavra_em_num)
-  print("-"*50)
+    chaveMatriz = np.array([[4, 3], [1, 2]])
+    criptografada = np.dot(chaveMatriz, matriz_palavra_em_num) % 26
+    # print(f"Matriz da palavra {palavra_original} criptografada:")
+    # print(criptografada)
+    # print("-" * 50)
+    palavra_criptografada = monta_palavra(criptografada, palavra_impar)
+    print(f"{palavra_original} = {palavra_criptografada}")
 
-  chaveMatriz = np.array([[4, 3], [1, 2]])
-  criptografada = np.dot(chaveMatriz, matriz_palavra_em_num) % 26
-  print(f"Matriz da palavra  {palavra} criptografada:")
-  print(criptografada)
-  print("-"*50)
-  print(f" {palavra} == {monta_palavra(criptografada, palavra_impar)}")
-
+    return palavra_criptografada
 def palavra_em_matriz(palavra):
-  letras = []
-  matriz_palavra_em_num = np.array([[], []])
-  for letra in range(len(palavra)):
-    for chave, valor in alfabeto.items():
-      if palavra[letra] == chave:
-          letras.append(valor)
-  for i in range(0, len(palavra)-1, 2):  
-      novaColuna = np.array([[letras[i]], [letras[i+1]]])
-      matriz_palavra_em_num = np.append(matriz_palavra_em_num, novaColuna, axis=1)
-  return matriz_palavra_em_num
+    letras = []
+    for letra in palavra:
+        letras.append(alfabeto[letra])
+    matriz_palavra_em_num = np.array(letras)
+    if len(matriz_palavra_em_num) % 2 != 0:
+        matriz_palavra_em_num = np.append(matriz_palavra_em_num, [0]) 
+    matriz_palavra_em_num = matriz_palavra_em_num.reshape(2, -1, order='F')
+    return matriz_palavra_em_num
 
 def monta_palavra(matriz, palavra_impar):
-  palavra_formada = ''
-  for linha in matriz.T:
-      for num in linha:
-          if num == 0:  
-              palavra_formada += 'Z'
-          else:
-              for chave, valor in alfabeto.items():
-                  if num == valor:
-                      palavra_formada += chave
-  if palavra_impar is True:
-    palavra_formada = palavra_formada[:-1]
-  return palavra_formada
+    palavra_formada = ''
+    for coluna in matriz.T:
+        for num in coluna:
+            if num == 0:
+                palavra_formada += ' '
+            else:
+                palavra_formada += list(alfabeto.keys())[list(alfabeto.values()).index(num)]
+    if palavra_impar:
+        palavra_formada = palavra_formada[:-1]
+    return palavra_formada
 
+def decifrar():
+    palavra_criptografada = input("Digite a palavra criptografada: ").upper()
+
+    matriz_palavra_em_num = palavra_em_matriz(palavra_criptografada)
+    a, b, c, d = 4, 3, 1, 2
+    chaveMatrizInversa = np.array([[d, -b], [-c, a]])
+    det = (a * d) - (b * c)
+    det_inversas = {1: 1, 3: 9, 5: 21, 7: 15, 9: 3, 11: 19, 15: 7, 17: 23, 19: 11, 21: 5, 23: 17, 25: 25}
+    det_inv = det_inversas[det % 26]
+    chaveMatrizInversa = (chaveMatrizInversa * det_inv) % 26
+
+    matriz_palavra_em_num = np.dot(chaveMatrizInversa, matriz_palavra_em_num) % 26
+
+    palavra_original = monta_palavra(matriz_palavra_em_num, len(palavra_criptografada) % 2 != 0)  # Corrigindo a lógica de remoção do último caractere
+
+    print("Mensagem descriptografada:")
+    print(palavra_original)
 
 # Começo da função da barra de carregamento
 def loading_bar():
@@ -82,59 +103,39 @@ def loading_bar():
     sys.stdout.write("\n")
 # Fim da função da barra de carregamento
 
-# --------------------------------------------------- #
+def menu() :
+    # Menu de navegação
+    loading_bar()
+    menu = ["1. Cadastrar produto","2. Alterar produtos", "3. Excluir produto", "4. Classificar produtos", "5. Sair"]
+    # Mostrar o menu e input para selecionar a opção
+    print (menu)
 
-# Banco de dados Oracle
-
-while True :
-    try:
-        pw = getpass.getpass("Digite a senha: ")
-        conexao = oracledb.connect(
-        user="sys",
-        password=pw,
-        dsn="localhost/XEPDB1",
-        mode=oracledb.SYSDBA)
-    except Exception as erro:
-        print('Erro de conexão:', erro)
-    else:
-        print("Conexão bem sucedida:", conexao.version)
-        break
-
-# --------------------------------------------------- #
-
-# Menu de navegação
-loading_bar()
-menu = ["1. Cadastrar produto","2. Alterar produtos", "3. Excluir produto", "4. Classificar produtos", "5. Sair"]
-
-# Mostrar o menu e input para selecionar a opção
-print (menu)
-opcao = int (input("\nSelecione uma opção: "))
-
-# SE o usuário digitar 1, para cadastrar o produto
-if opcao == 1 :
+# 1
+def adicionar_produto () :
     # Criar cursor e commitar alterações (Nenhuma alteração no caso)
     cursor = conexao.cursor()
-
     loading_bar()
+    
     print (f"Vamos ao cadastro do seu produto, preencha as informações abaixo: ")
     id_produto = str (input("Digite o código do produto: "))
     nome = str (input("Digite o nome do produto: "))
     descricao = str (input("Digite a descrição do produto: ")) # Colocar a func codificadora aqui
 
+    palavra_criptografada = criptografar(descricao)
+    
+    decifrar()
     # Perguntas para montar a fórmula de cálculo do preço de venda
     loading_bar()
-    print (f"Agora, precisamos algumas informações para o levantamente de alguns dados:  ")
+    print (f"Agora, precisamos de algumas informações para o levantamento de dados:")
     
     CP = int (input("Qual custo de aquisição do produto?: "))
     CF = int (input("Qual o custo fixo/administrativo? (em porcentagem):  "))
     CV = int(input("Qual a comissão de venda do produto? (em porcentagem):  "))
-    IV = int(input("Qual o imposto cobrado sobre a venda do produto? (em porcetagem): "))
+    IV = int(input("Qual o imposto cobrado sobre a venda do produto? (em porcentagem): "))
     ML = int(input("Qual a margem do lucro do produto? (em porcentagem):  "))
 
-    # ---------------- CRIPTOGRAFAR DESCRIÇÃO AQUI !! ----------------
-
     #Executar comando no banco de dados
-    cursor.execute(f"INSERT INTO Produtos (ID, NOME, DESCRICAO, CP, CF, CV, IV, ML) VALUES ({id_produto}, '{nome}', '{descricao}', {CP}, {CF}, {CV}, {IV}, {ML})")
+    cursor.execute(f"INSERT INTO Produtos (ID, NOME, DESCRICAO, CP, CF, CV, IV, ML) VALUES ({id_produto}, '{nome}', '{palavra_criptografada}', {CP}, {CF}, {CV}, {IV}, {ML})")
     conexao.commit()
     # Fechar cursos
     cursor.close()
@@ -187,7 +188,7 @@ if opcao == 1 :
                    "Valor": [PV, CP, RB, PCF, PCV, PIV, POC, PML],
                    "%": [PPV, PCP, PRB, CF, CV, IV, OC, ML]})
     
-    print(f"\nID do Produto: {id_produto}\nProduto: {nome}\nDescrição: {descricao}\n{tabela} \n")
+    print(f"\nID do Produto: {id_produto}\nProduto: {nome}\nDescrição: {palavra_criptografada}\n{tabela} \n")
     print ("-" * 55)
 
     # Passando a margem de lucro (ML) para porcentagem
@@ -204,8 +205,8 @@ if opcao == 1 :
     else:
         print("Prejuízo!")
 
-# SE o usuário digitar 2, irá alterar algum produto
-elif opcao == 2 :
+# 2
+def alterar_produto () :
     # Criar cursor e commitar alterações (Nenhuma alteração no caso)
     cursor = conexao.cursor()
     #Executar comando no banco de dados 
@@ -221,7 +222,6 @@ elif opcao == 2 :
         
         # Atribuir das tuplas a variável "i" -- Será atribuido a cada uma das variaveis as tuplas correspondentes a lista "lista_produtos".
         id_produto, nome, descricao, CP, CF, CV, IV, ML = i
-
         ids.append(id_produto)
         print (f"ID: {id_produto} │ Nome: {nome} │ Descrição: {descricao} │ CP: R${CP} │ CF: {CF}% │ CV: {CV}% │ IV: {IV}% │ ML: {ML}%")
     while True:
@@ -270,10 +270,7 @@ elif opcao == 2 :
         except ValueError as erro:
             print(erro)
 
-        
-
-# SE o usuário digitar 3, irá excluir algum produto
-elif opcao == 3 :
+def excluir_produto ():
     # Criar cursor e commitar alterações (Nenhuma alteração no caso)
     cursor = conexao.cursor()
     #Executar comando no banco de dados 
@@ -336,8 +333,7 @@ elif opcao == 3 :
         except ValueError as erro:
             print(erro)
 
-# SE o usuário digitar 4, irá classificar todos os produtos existentes da tabela "Produtos" do DB
-elif opcao == 4 :
+def classificar_produtos():
     # Criar cursor e commitar alterações (Nenhuma alteração no caso)
     cursor = conexao.cursor()
     #Executar comando no banco de dados 
@@ -398,9 +394,13 @@ elif opcao == 4 :
                                "Valor": [PV, CP, RB, PCF, PCV, PIV, POC, PML],
                                "%": [PPV, PCP, PRB, CF, CV, IV, OC, ML]})
         
-        print(f"\nID do Produto: {id_produto}\nProduto: {nome}\nDescrição: {descricao}\n{tabela} \n-------------------------------------------------")
+        print(f"\nID do Produto: {id_produto}\nProduto: {nome}\nDescrição: {descricao}\n{tabela} \n", "-" * 45 )
 
-        # Passando a margem de lucro (ML) para porcentagem
+        #Função Lucro
+        lucro(ML)
+
+def lucro(ML):
+    # Passando a margem de lucro (ML) para porcentagem
         lucro = ML/100
 
         if lucro > (0.2):
@@ -414,9 +414,45 @@ elif opcao == 4 :
         else:
             print("Prejuízo!")
 
-# Função sair, importado da biblioteca sys.
-elif opcao == 5 :
+def sair():
     print ("Saindo...")
     sys.exit()
 
 
+# Banco de dados Oracle
+
+while True :
+    try:
+        pw = getpass.getpass("Digite a senha: ")
+        conexao = oracledb.connect(
+        user="sys",
+        password=pw,
+        dsn="localhost/XEPDB1",
+        mode=oracledb.SYSDBA)
+    except Exception as erro:
+        print('Erro de conexão:', erro)
+    else:
+        print("Conexão bem sucedida:", conexao.version)
+        break
+
+
+while True:
+
+    menu()
+    opcao = int (input("Escolha uma opção: "))
+
+    if opcao == 1 :
+         adicionar_produto()
+
+    elif opcao == 2 :
+        alterar_produto()
+
+    elif opcao == 3 :
+        excluir_produto()
+
+    elif opcao == 4 :
+        classificar_produtos()
+        
+    else :
+        sair()
+         
