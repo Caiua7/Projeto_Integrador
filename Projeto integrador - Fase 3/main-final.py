@@ -4,10 +4,14 @@
 import os
 import sys
 import time
+
 import pandas as pd
 from tabulate import tabulate
+
 from unidecode import unidecode
+
 import numpy as np
+
 import getpass
 import oracledb
 
@@ -24,9 +28,8 @@ alfabeto = {' ': 0,'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7, 'H': 
 def menu() :
     # Menu de navegação
     loading_bar()
-    menu = ["1. Cadastrar produto","2. Alterar produtos", "3. Excluir produto", "4. Classificar produtos", "0. Sair"]
-    for i in menu :
-        print(f"{i}")
+    print ("\nBem vindo ao sistema de Controle de Estoque, Cálculo de preço de venda, Percentuais e Classificação de lucro. \n")
+    print ("1. Cadastrar produto \n2. Alterar produtos \n3. Excluir produto \n4. Classificar produtos \n0. Sair")
 
 def criptografar(descricao):
     palavra = f'{unidecode(descricao)}'.upper()
@@ -178,7 +181,7 @@ def mostrar_tabela(id_produto, nome, descricao, CP, CF, CV, IV, ML):
     
     "%": [f"{PPV:.2f}%", f"{PCP:.2f}%", f"{PRB:.2f}%", f"{CF:.2f}%", f"{CV:.2f}%", f"{IV:.2f}%", f"{OC:.2f}%", f"{ML:.2f}%"]})
     
-    print(f"\nID do Produto: {id_produto}\nProduto: {nome}\nDescrição: {descricao}")
+    print(f"\nID do Produto: {id_produto}\nProduto: {nome}\nDescrição: {descricao.capitalize()}")
     alinhamento = ("left", "left", "left")
     print(tabulate(tabela, headers='keys', tablefmt='fancy_grid', showindex=False, colalign=alinhamento))
 
@@ -200,10 +203,23 @@ def lucro(ML):
 # 1 
 def adicionar_produto () :
     cursor = conexao.cursor()
+    cursor.execute("SELECT * FROM Produtos")
+    produtos = cursor.fetchall()
+    ids = []
+    for i in produtos :
+        id, nome, descricao, CP, CF, CV, IV, ML = i
+        # Armazenando Id's
+        ids.append(id)
 
     loading_bar()
     print (f"Vamos ao cadastro do seu produto, preencha as informações abaixo: ")
-    id_produto = str (input("Digite o código do produto: "))
+    while True:
+        id_produto = input("Digite o código do produto: ")
+        if id_produto in ids:
+            print("Esse ID já existe no banco de dados, tente novamente!")
+        else:
+            break
+    
     nome = str (input("Digite o nome do produto: "))
     descricao = str (input("Digite a descrição do produto: "))
 
@@ -270,7 +286,7 @@ def alterar_produto () :
                 else :
                     alterar = 'ML'
 
-                set_alterar = input (f"Qual o novo valor para {alterar}?")
+                set_alterar = input (f"Qual o novo valor para {alterar}? ")
 
                 if alterar == 'DESCRICAO' :
                     set_alterar = criptografar(set_alterar)
@@ -313,7 +329,6 @@ def excluir_produto ():
                 print("Esse ID não existe na tabela. Digite um ID válido.")
 
             else :
-
                 cursor.execute(f"SELECT * FROM Produtos WHERE ID = {id_excluir}")
                 produtos = cursor.fetchall() 
                 
@@ -400,9 +415,6 @@ while True:
         elif opcao == 0 :
             print ("Saindo...")
             sys.exit()
-        
-        else :
-            print("Tente novamente...")
-
+            
     except ValueError:
         print("Tente novamente...")
