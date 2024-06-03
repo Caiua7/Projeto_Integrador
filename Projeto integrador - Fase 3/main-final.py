@@ -187,18 +187,18 @@ def mostrar_tabela(id_produto, nome, descricao, CP, CF, CV, IV, ML):
 
 def lucro(ML):
     # Passando a margem de lucro (ML) para porcentagem
-        lucro = ML/100
+    lucro = ML/100
 
-        if lucro > (0.2):
-            print("Lucro alto!\n")
-        elif (0.1) < lucro <= (0.2):
-            print("Lucro médio!\n")
-        elif (0) < lucro <= (0.1):
-            print("Lucro baixo!\n")
-        elif lucro == 0:
-            print("Equilíbrio!\n")
-        else:
-            print("Prejuízo!\n")
+    if lucro > (0.2):
+        print("Lucro alto!\n")
+    elif (0.1) < lucro <= (0.2):
+        print("Lucro médio!\n")
+    elif (0) < lucro <= (0.1):
+        print("Lucro baixo!\n")
+    elif lucro == 0:
+        print("Equilíbrio!\n")
+    else:
+        print("Prejuízo!\n")
 
 # 1 
 def adicionar_produto () :
