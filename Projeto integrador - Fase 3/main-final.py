@@ -33,58 +33,92 @@ def menu() :
 
 def criptografar(descricao):
     palavra = f'{unidecode(descricao)}'.upper()
+    
     palavra_impar = False
+
+    # Se a palavra for impar, adicionar um 'A' para ficar par.
     if len(palavra) % 2 != 0:
         palavra += "A"
         palavra_impar = True
 
+    # Converte a palavra, descrição no caso, em uma matriz de números.
     matriz_palavra_em_num = palavra_em_matriz(palavra)
 
+    # Definindo a matriz chave
     chaveMatriz = np.array([[4, 3], [1, 2]])
+
+    # Multiplicando a matriz chave pela matriz da descrição e aplicando o módulo de 26.
     criptografada = np.dot(chaveMatriz, matriz_palavra_em_num) % 26
-    # print(f"Matriz da palavra {palavra_original} criptografada:")
-    # print(criptografada)
-    # print("-" * 50)
+    
+    # Montando a palavra a partir da matriz resultante
     palavra_criptografada = monta_palavra(criptografada, palavra_impar)
-    # print(f"{palavra_original} = {palavra_criptografada}")
 
     return palavra_criptografada
 
 def palavra_em_matriz(palavra):
     letras = []
+
+    # Lendo a descrição, verificando o valor correspondente e adicionar em 'letras' o valor correspondente as letras de descrição. 
     for letra in palavra:
         letras.append(alfabeto[letra])
+
+    # Convertendo em um array para realizar os calculos.
     matriz_palavra_em_num = np.array(letras)
 
+    # Impar ou não (Se for impar, adiciona o valor 0 ao final do array.)
     if len(matriz_palavra_em_num) % 2 != 0:
         matriz_palavra_em_num = np.append(matriz_palavra_em_num, [0]) 
 
+    # Pega o array e transforma em uma matriz c/ 2 linhas, -1 para determinar o número de colunas automaticamente e 'F' para ordernar os números coluna por coluna.
     matriz_palavra_em_num = matriz_palavra_em_num.reshape(2, -1, order='F')
+
     return matriz_palavra_em_num
 
 def monta_palavra(matriz, palavra_impar):
+    # Defininindo a variável da palavra que será formada a partir da matriz.
     palavra_formada = ''
+    
+    # Loop da transposta da Matriz
     for coluna in matriz.T:
+        # Verificando na matriz o número (Através das colunas)
         for num in coluna:
             if num == 0:
                 palavra_formada += ' '
             else:
-                palavra_formada += list(alfabeto.keys())[list(alfabeto.values()).index(num)]
+                palavra_formada += list(alfabeto.keys())[list(alfabeto.values()).index(num)] # Encontrando a letra correspondente ao número 'Num'
+    # Se a palavra for impar, elimina o ultimo caracter.            
     if palavra_impar:
         palavra_formada = palavra_formada[:-1]
+
     return palavra_formada
 
 def decifrar(descricao):
+    # Descrição maiuscula
     palavra_criptografada = descricao.upper()
 
+    # Montando a matriz da descrição
     matriz_palavra_em_num = palavra_em_matriz(palavra_criptografada)
+
+    # Matriz inversa da chave original
     a, b, c, d = 4, 3, 1, 2
     chaveMatrizInversa = np.array([[d, -b], [-c, a]])
+
+    # determinante da matriz chave original
     det = (a * d) - (b * c)
+
+    # Mapeia os determinantes possíveis para seus inversos
     det_inversas = {1: 1, 3: 9, 5: 21, 7: 15, 9: 3, 11: 19, 15: 7, 17: 23, 19: 11, 21: 5, 23: 17, 25: 25}
+
+    # Inverso
     det_inv = det_inversas[det % 26]
+
+    # Multiplicação da Matriz inversa da chave pelo det inv e aplica %26 para garantir que esteja dentro do alfab.
     chaveMatrizInversa = (chaveMatrizInversa * det_inv) % 26
+
+    # Multiplicação da inversa da Matriz Chave pela matriz da descrição e aplica %26 para garantir que esteja dentro do alfab.
     matriz_palavra_em_num = np.dot(chaveMatrizInversa, matriz_palavra_em_num) % 26
+
+    # Monta a palavra decifrada através da matriz
     palavra_decifrada = monta_palavra(matriz_palavra_em_num, len(palavra_criptografada) % 2 != 0)
 
     return palavra_decifrada
@@ -232,6 +266,7 @@ def adicionar_produto () :
     ML = int (input("Qual a margem do lucro do produto? (em porcentagem):  "))
 
     descricao_criptografada = criptografar(descricao)
+    
     cursor.execute(f"INSERT INTO Produtos (ID, NOME, DESCRICAO, CP, CF, CV, IV, ML) VALUES ({id_produto}, '{nome}', '{descricao_criptografada}', {CP}, {CF}, {CV}, {IV}, {ML})")
     conexao.commit()
 
@@ -353,8 +388,7 @@ def excluir_produto ():
 
                 else :
                     loading_bar()
-                    excluir_produto()
-                    break
+                    continue
                 
         except ValueError as erro:
             print(erro)
